@@ -67,8 +67,8 @@ sub import {
 
     eval {
         feature->import($_) for (@features);
-        feature->import( map { @{ $experiments{$_} } } grep { $_ <= $perl_version } keys %experiments )
-            unless ( grep { $_ eq 'noexperiments' } @functions );
+        my @experiments = map { @{ $experiments{$_} } } grep { $_ <= $perl_version } keys %experiments;
+        feature->import(@experiments) unless ( not @experiments or grep { $_ eq 'noexperiments' } @functions );
     };
     if ( my $err = $@ ) {
         $err =~ s/\s*at .+? line \d+\.\s+//;
