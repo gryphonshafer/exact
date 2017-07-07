@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.00
+version 1.01
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
