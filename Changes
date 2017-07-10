@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.02      2017-07-10 13:32:41-04:00 America/New_York
         - Alter dependencies to enable old versions of Perl back to v5.10
 
 1.01      2017-07-07 18:16:59-04:00 America/New_York
