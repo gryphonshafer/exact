@@ -4,10 +4,10 @@ package exact;
 use 5.010;
 use strict;
 use warnings;
-use feature 'fc';
 
 # VERSION
 
+use feature    ();
 use mro        ();
 use IO::File   ();
 use IO::Handle ();
@@ -35,7 +35,7 @@ sub import {
     shift;
     my ( @bundles, @functions, @features );
     for (@_) {
-        my $opt = fc $_;
+        my $opt = lc $_;
 
         if ( grep { $_ eq $opt } @feature_list ) {
             push( @features, $opt );
@@ -75,7 +75,8 @@ sub import {
         croak("$err via use of exact");
     }
 
-    warnings->unimport('experimental') unless ( grep { $_ eq 'noskipexperimentalwarnings' } @functions );
+    warnings->unimport('experimental')
+        unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
 }
 
 1;

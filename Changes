@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Alter dependencies to enable old versions of Perl back to v5.10
 
 1.01      2017-07-07 18:16:59-04:00 America/New_York
         - Deactivate TravisCI testing of 3 old Perl versions temporarily
