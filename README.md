@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.02
+version 1.03
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -115,7 +115,7 @@ Gryphon Shafer <gryphon@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2017 by Gryphon Shafer.
+This software is copyright (c) 2018 by Gryphon Shafer.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
