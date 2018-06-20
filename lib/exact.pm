@@ -2,8 +2,7 @@ package exact;
 # ABSTRACT: Perl pseudo pragma to enable strict, warnings, features, mro, filehandle methods
 
 use 5.010;
-use strict;
-use warnings;
+use strictures 2;
 
 # VERSION
 
@@ -27,7 +26,7 @@ my %experiments = (
     26 => ['declared_refs'],
 );
 
-my @function_list  = qw( nostrict nowarnings noc3 nobundle noexperiments noskipexperimentalwarnings );
+my @function_list  = qw( nostrictures noc3 nobundle noexperiments noskipexperimentalwarnings );
 my @feature_list   = map { @$_ } values %features, values %experiments;
 my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
@@ -54,8 +53,7 @@ sub import {
 
     mro::set_mro( scalar caller(), 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
 
-    strict->import unless ( grep { $_ eq 'nostrict' } @functions );
-    warnings->import unless ( grep { $_ eq 'nowarnings' } @functions );
+    strictures->import unless ( grep { $_ eq 'nostrictures' } @functions );
 
     if (@bundles) {
         my ($bundle) = sort { $b <=> $a } @bundles;
@@ -95,8 +93,7 @@ __END__
 
 Instead of this:
 
-    use strict;
-    use warnings;
+    use strictures 2;
     use feature ':5.23';
     use feature qw( signatures refaliasing bitwise );
     use mro 'c3';
@@ -114,7 +111,7 @@ Type this:
 Or for finer control, add some trailing modifiers like a line of the following:
 
     use exact '5.20';
-    use exact qw( 5.16 nowarnings noc3 noexperiments );
+    use exact qw( 5.16 nostrictures noc3 noexperiments );
     use exact qw( noexperiments fc signatures );
 
 =head1 DESCRIPTION
@@ -126,8 +123,7 @@ defaults that seem to make sense but allowing overrides easily.
 By default, L<exact> will:
 
 =for :list
-* enable L<strict>
-* enable L<warnings>
+* enable L<strictures> (version 2)
 * load the latest L<feature> bundle supported by the current Perl version
 * load all experimental L<feature>s and switch off experimental warnings
 * set C3 style of L<mro>
@@ -137,13 +133,9 @@ By default, L<exact> will:
 
 L<exact> supports the following import flags:
 
-=head2 C<nostrict>
+=head2 C<nostrictures>
 
-This skips turning on the L<strict> pragma.
-
-=head2 C<nowarnings>
-
-This skips turning on the L<warnings> pragma.
+This skips using the L<strictures> setup.
 
 =head2 C<noc3>
 
