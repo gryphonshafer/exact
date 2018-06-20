@@ -2,6 +2,7 @@ Revision history for exact
 
 {{$NEXT}}
         - use strictures 2
+        - use namespace::autoclean
 
 1.03      2018-01-04 18:58:07-08:00 America/Los_Angeles
         - Add Perl versions to test; annual general update for 2018

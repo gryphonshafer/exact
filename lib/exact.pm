@@ -3,6 +3,7 @@ package exact;
 
 use 5.010;
 use strictures 2;
+use namespace::autoclean;
 
 # VERSION
 
@@ -52,8 +53,8 @@ sub import {
     }
 
     mro::set_mro( scalar caller(), 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
-
     strictures->import unless ( grep { $_ eq 'nostrictures' } @functions );
+    namespace::autoclean->import( '-cleanee' => scalar caller() );
 
     if (@bundles) {
         my ($bundle) = sort { $b <=> $a } @bundles;
@@ -99,6 +100,7 @@ Instead of this:
     use mro 'c3';
     use IO::File;
     use IO::Handle;
+    use namespace::autoclean;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
