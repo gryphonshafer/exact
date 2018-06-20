@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.03
+version 1.04
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -13,13 +13,13 @@ version 1.03
 
 Instead of this:
 
-    use strict;
-    use warnings;
+    use strictures 2;
     use feature ':5.23';
     use feature qw( signatures refaliasing bitwise );
     use mro 'c3';
     use IO::File;
     use IO::Handle;
+    use namespace::autoclean;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -32,7 +32,7 @@ Type this:
 Or for finer control, add some trailing modifiers like a line of the following:
 
     use exact '5.20';
-    use exact qw( 5.16 nowarnings noc3 noexperiments );
+    use exact qw( 5.16 nostrictures noc3 noexperiments );
     use exact qw( noexperiments fc signatures );
 
 # DESCRIPTION
@@ -43,8 +43,7 @@ defaults that seem to make sense but allowing overrides easily.
 
 By default, [exact](https://metacpan.org/pod/exact) will:
 
-- enable [strict](https://metacpan.org/pod/strict)
-- enable [warnings](https://metacpan.org/pod/warnings)
+- enable [strictures](https://metacpan.org/pod/strictures) (version 2)
 - load the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
 - load all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
 - set C3 style of [mro](https://metacpan.org/pod/mro)
@@ -54,13 +53,9 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 
 [exact](https://metacpan.org/pod/exact) supports the following import flags:
 
-## `nostrict`
+## `nostrictures`
 
-This skips turning on the [strict](https://metacpan.org/pod/strict) pragma.
-
-## `nowarnings`
-
-This skips turning on the [warnings](https://metacpan.org/pod/warnings) pragma.
+This skips using the [strictures](https://metacpan.org/pod/strictures) setup.
 
 ## `noc3`
 
