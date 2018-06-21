@@ -23,18 +23,17 @@ my %WriteMakefileArgs = (
     "feature" => 0,
     "mro" => 0,
     "namespace::autoclean" => 0,
-    "strictures" => 2
+    "strict" => 0,
+    "warnings" => 0
   },
   "TEST_REQUIRES" => {
     "File::Spec" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Test::Exception" => 0,
-    "Test::More" => 0,
-    "strict" => 0,
-    "warnings" => 0
+    "Test::More" => 0
   },
-  "VERSION" => "1.04",
+  "VERSION" => "1.05",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -53,7 +52,6 @@ my %FallbackPrereqs = (
   "mro" => 0,
   "namespace::autoclean" => 0,
   "strict" => 0,
-  "strictures" => 2,
   "warnings" => 0
 );
 

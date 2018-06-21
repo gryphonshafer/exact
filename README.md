@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.04
+version 1.05
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -13,7 +13,8 @@ version 1.04
 
 Instead of this:
 
-    use strictures 2;
+    use strict;
+    use warnings;
     use feature ':5.23';
     use feature qw( signatures refaliasing bitwise );
     use mro 'c3';
@@ -32,7 +33,7 @@ Type this:
 Or for finer control, add some trailing modifiers like a line of the following:
 
     use exact '5.20';
-    use exact qw( 5.16 nostrictures noc3 noexperiments );
+    use exact qw( 5.16 nostrict nowarnings noc3 noexperiments noautoclean );
     use exact qw( noexperiments fc signatures );
 
 # DESCRIPTION
@@ -53,9 +54,13 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 
 [exact](https://metacpan.org/pod/exact) supports the following import flags:
 
-## `nostrictures`
+## `nostrict`
 
-This skips using the [strictures](https://metacpan.org/pod/strictures) setup.
+This skips turning on the [strict](https://metacpan.org/pod/strict) pragma.
+
+## `nowarnings`
+
+This skips turning on the [warnings](https://metacpan.org/pod/warnings) pragma.
 
 ## `noc3`
 
@@ -75,6 +80,10 @@ This skips enabling all features currently labled experimental by [feature](http
 
 Normally, [exact](https://metacpan.org/pod/exact) will disable experimental warnings. This skips that
 disabling step.
+
+## `noautoclean`
+
+This skips using [namespace::autoclean](https://metacpan.org/pod/namespace::autoclean).
 
 ## Explicit Features and Bundles by Name
 

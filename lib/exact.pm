@@ -2,7 +2,8 @@ package exact;
 # ABSTRACT: Perl pseudo pragma to enable strict, warnings, features, mro, filehandle methods
 
 use 5.010;
-use strictures 2;
+use strict;
+use warnings;
 use namespace::autoclean;
 
 # VERSION
@@ -27,7 +28,9 @@ my %experiments = (
     26 => ['declared_refs'],
 );
 
-my @function_list  = qw( nostrictures noc3 nobundle noexperiments noskipexperimentalwarnings );
+my @function_list = qw(
+    nostrict nowarnings noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean
+);
 my @feature_list   = map { @$_ } values %features, values %experiments;
 my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
@@ -52,9 +55,11 @@ sub import {
         }
     }
 
+    strict->import unless ( grep { $_ eq 'nostrict' } @functions );
+    warnings->import unless ( grep { $_ eq 'nowarnings' } @functions );
     mro::set_mro( scalar caller(), 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
-    strictures->import unless ( grep { $_ eq 'nostrictures' } @functions );
-    namespace::autoclean->import( '-cleanee' => scalar caller() );
+    namespace::autoclean->import( '-cleanee' => scalar caller() )
+        unless ( grep { $_ eq 'noautoclean' } @functions ) ;
 
     if (@bundles) {
         my ($bundle) = sort { $b <=> $a } @bundles;
@@ -94,7 +99,8 @@ __END__
 
 Instead of this:
 
-    use strictures 2;
+    use strict;
+    use warnings;
     use feature ':5.23';
     use feature qw( signatures refaliasing bitwise );
     use mro 'c3';
@@ -113,7 +119,7 @@ Type this:
 Or for finer control, add some trailing modifiers like a line of the following:
 
     use exact '5.20';
-    use exact qw( 5.16 nostrictures noc3 noexperiments );
+    use exact qw( 5.16 nostrict nowarnings noc3 noexperiments noautoclean );
     use exact qw( noexperiments fc signatures );
 
 =head1 DESCRIPTION
@@ -135,9 +141,13 @@ By default, L<exact> will:
 
 L<exact> supports the following import flags:
 
-=head2 C<nostrictures>
+=head2 C<nostrict>
 
-This skips using the L<strictures> setup.
+This skips turning on the L<strict> pragma.
+
+=head2 C<nowarnings>
+
+This skips turning on the L<warnings> pragma.
 
 =head2 C<noc3>
 
@@ -157,6 +167,10 @@ This skips enabling all features currently labled experimental by L<feature>.
 
 Normally, L<exact> will disable experimental warnings. This skips that
 disabling step.
+
+=head2 C<noautoclean>
+
+This skips using L<namespace::autoclean>.
 
 =head2 Explicit Features and Bundles by Name
 
