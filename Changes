@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.05      2018-06-21 16:16:55-07:00 America/Los_Angeles
         - Reverse use of strictures in favor of strict/warnings
 
 1.04      2018-06-20 12:31:51-07:00 America/Los_Angeles
