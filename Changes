@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Include support for UTF8
+        - Update feature sets to include Perl 5.30
 
 1.05      2018-06-21 16:16:55-07:00 America/Los_Angeles
         - Reverse use of strictures in favor of strict/warnings

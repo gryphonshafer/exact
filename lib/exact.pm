@@ -9,6 +9,7 @@ use namespace::autoclean;
 # VERSION
 
 use feature    ();
+use utf8       ();
 use mro        ();
 use IO::File   ();
 use IO::Handle ();
@@ -17,21 +18,27 @@ use Carp       'croak';
 my %features = (
     10 => [ qw( say state switch ) ],
     12 => ['unicode_strings'],
-    16 => [ qw( unicode_eval evalbytes current_sub array_base fc ) ],
+    16 => [ qw( unicode_eval evalbytes current_sub fc ) ],
     18 => ['lexical_subs'],
-    20 => [ qw( postderef postderef_qq ) ],
+    24 => [ qw( postderef postderef_qq ) ],
+    28 => ['bitwise'],
+);
+
+my %deprecated = (
+    16 => ['array_base'],
 );
 
 my %experiments = (
     20 => ['signatures'],
-    22 => [ qw( refaliasing bitwise ) ],
+    22 => ['refaliasing'],
     26 => ['declared_refs'],
 );
 
 my @function_list = qw(
-    nostrict nowarnings noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean
+    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean
 );
-my @feature_list   = map { @$_ } values %features, values %experiments;
+
+my @feature_list   = map { @$_ } values %features, values %deprecated, values %experiments;
 my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
 sub import {
@@ -57,6 +64,12 @@ sub import {
 
     strict->import unless ( grep { $_ eq 'nostrict' } @functions );
     warnings->import unless ( grep { $_ eq 'nowarnings' } @functions );
+
+    unless ( grep { $_ eq 'noutf8' } @functions ) {
+        utf8->import;
+        binmode( $_, ':utf8' ) for ( *STDIN, *STDERR, *STDOUT );
+    }
+
     mro::set_mro( scalar caller(), 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
     namespace::autoclean->import( '-cleanee' => scalar caller() )
         unless ( grep { $_ eq 'noautoclean' } @functions ) ;
@@ -101,6 +114,8 @@ Instead of this:
 
     use strict;
     use warnings;
+    use utf8;
+    use open ':std', ':utf8';
     use feature ':5.23';
     use feature qw( signatures refaliasing bitwise );
     use mro 'c3';
@@ -119,8 +134,8 @@ Type this:
 Or for finer control, add some trailing modifiers like a line of the following:
 
     use exact '5.20';
-    use exact qw( 5.16 nostrict nowarnings noc3 noexperiments noautoclean );
-    use exact qw( noexperiments fc signatures );
+    use exact 5.16, nostrict, nowarnings, noc3, noutf8, noexperiments, noautoclean;
+    use exact noexperiments, fc, signatures;
 
 =head1 DESCRIPTION
 
@@ -135,6 +150,7 @@ By default, L<exact> will:
 * load the latest L<feature> bundle supported by the current Perl version
 * load all experimental L<feature>s and switch off experimental warnings
 * set C3 style of L<mro>
+* use utf8 in the source code context
 * enable methods on filehandles
 
 =head1 IMPORT FLAGS
@@ -148,6 +164,11 @@ This skips turning on the L<strict> pragma.
 =head2 C<nowarnings>
 
 This skips turning on the L<warnings> pragma.
+
+=head2 C<noutf8>
+
+This skips turning on UTF8 in the source code context. Also skips setting
+STDIN, STDOUT, and STDERR to expect UTF8.
 
 =head2 C<noc3>
 
@@ -177,7 +198,7 @@ This skips using L<namespace::autoclean>.
 You can always provide a list of explicit features and bundles from L<feature>.
 If provided, these will be enabled regardless of the other import flags set.
 
-    use exact qw( noexperiments fc signatures );
+    use exact noexperiments, fc, signatures;
 
 Bundles provided can be exactly like those described in L<feature> or in a
 variety of obvious forms:
