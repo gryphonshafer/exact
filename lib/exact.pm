@@ -183,8 +183,10 @@ By default, L<exact> will:
 * load the latest L<feature> bundle supported by the current Perl version
 * load all experimental L<feature>s and switch off experimental warnings
 * set C3 style of L<mro>
-* use utf8 in the source code context
+* use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 * enable methods on filehandles
+* import L<Carp>'s 4 methods
+* import (kinda) L<TryCatch> awesomeness
 
 =head1 IMPORT FLAGS
 
