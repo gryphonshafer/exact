@@ -13,7 +13,7 @@ use utf8       ();
 use mro        ();
 use IO::File   ();
 use IO::Handle ();
-use Carp       'croak';
+use Carp       qw( croak carp confess cluck );
 
 my %features = (
     10 => [ qw( say state switch ) ],
@@ -35,7 +35,7 @@ my %experiments = (
 );
 
 my @function_list = qw(
-    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean
+    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean nocarp
 );
 
 my @feature_list   = map { @$_ } values %features, values %deprecated, values %experiments;
@@ -94,6 +94,15 @@ sub import {
     warnings->unimport('experimental')
         unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
 
+    unless ( grep { $_ eq 'nocarp' } @functions ) {
+        no strict 'refs';
+        my $caller = caller();
+        *{ $caller . '::croak' }   = \&croak;
+        *{ $caller . '::carp' }    = \&carp;
+        *{ $caller . '::confess' } = \&confess;
+        *{ $caller . '::cluck' }   = \&crcluck;
+    }
+
     for my $opt (@subclasses) {
         my $params = ( $opt =~ s/\(([^\)]+)\)// ) ? [$1] : [];
         eval "require exact::$opt";
@@ -137,6 +146,7 @@ Instead of this:
     use IO::File;
     use IO::Handle;
     use namespace::autoclean;
+    use Carp qw( croak carp confess cluck );
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -207,6 +217,11 @@ disabling step.
 =head2 C<noautoclean>
 
 This skips using L<namespace::autoclean>.
+
+=head2 C<nocarp>
+
+This skips importing the 4 L<Carp> methods: C<croak>, C<carp>, C<confess>,
+C<cluck>.
 
 =head2 Explicit Features and Bundles by Name
 

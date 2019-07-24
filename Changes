@@ -2,6 +2,7 @@ Revision history for exact
 
 {{$NEXT}}
         - Extensions support
+        - Carp methods import
         - Include support for UTF8
         - Update feature sets to include Perl 5.30
 
