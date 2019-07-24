@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Extensions support
         - Include support for UTF8
         - Update feature sets to include Perl 5.30
 

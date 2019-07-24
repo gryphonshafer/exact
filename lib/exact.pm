@@ -43,7 +43,7 @@ my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
 sub import {
     shift;
-    my ( @bundles, @functions, @features );
+    my ( @bundles, @functions, @features, @subclasses );
     for (@_) {
         my $opt = lc $_;
 
@@ -57,8 +57,7 @@ sub import {
             push( @bundles, $1 );
         }
         else {
-            my $v = __PACKAGE__->VERSION;
-            croak( qq{"$opt" is not supported by exact} . ( ($v) ? ' ' . $v : '' ) );
+            push( @subclasses, $opt );
         }
     }
 
@@ -94,6 +93,22 @@ sub import {
 
     warnings->unimport('experimental')
         unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
+
+    for my $opt (@subclasses) {
+        my $params = ( $opt =~ s/\(([^\)]+)\)// ) ? [$1] : [];
+        eval "require exact::$opt";
+
+        if ( my $e = lcfirst($@) ) {
+            my $v = __PACKAGE__->VERSION;
+            croak(
+                qq{Either "$opt" not supported by exact} .
+                ( ($v) ? ' ' . $v : '' ) .
+                qq{ or $e}
+            );
+        }
+
+        "exact::$opt"->import( scalar caller(), @$params ) if ( "exact::$opt"->can('import') );
+    }
 }
 
 1;
@@ -208,6 +223,45 @@ variety of obvious forms:
 * 5.26
 * v5.26
 * 26
+
+=head1 EXTENSIONS
+
+It's possible to write extensions or plugins for L<exact> to provide
+context-specific behavior. To activate these extensions, you need to provide
+their named suffix as a parameter to the C<use> of L<exact>.
+
+    # will load "exact" and "exact::class";
+    use exact class;
+
+    # will load "exact" and "exact::role" and turn off UTF8 features;
+    use exact role, noutf8;
+
+It's possible to provide parameters to the C<import> method of the extension.
+
+    # will load "exact" and "exact::answer" and pass "42" to the import method
+    use exact 'answer(42)';
+
+=head2 Writing Extensions
+
+An extension may but is not required to have an C<import> method. If such a
+method does exist, it will be passed: the package name, the name of the caller
+of L<exact>, and any parameters passed.
+
+    package exact::example;
+    use exact;
+
+    sub import {
+        my ( $self, $caller, $params ) = @_;
+
+        no strict 'refs';
+        *{ $caller . '::example' } = \&example;
+    }
+
+    sub example {
+        say 42;
+    }
+
+    1;
 
 =head1 SEE ALSO
 
