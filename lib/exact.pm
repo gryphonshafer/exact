@@ -5,6 +5,7 @@ use 5.010;
 use strict;
 use warnings;
 use namespace::autoclean;
+use TryCatch;
 
 # VERSION
 
@@ -35,7 +36,7 @@ my %experiments = (
 );
 
 my @function_list = qw(
-    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean nocarp
+    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean nocarp notry
 );
 
 my @feature_list   = map { @$_ } values %features, values %deprecated, values %experiments;
@@ -94,14 +95,20 @@ sub import {
     warnings->unimport('experimental')
         unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
 
+    my $caller = caller();
     unless ( grep { $_ eq 'nocarp' } @functions ) {
         no strict 'refs';
-        my $caller = caller();
         *{ $caller . '::croak' }   = \&croak;
         *{ $caller . '::carp' }    = \&carp;
         *{ $caller . '::confess' } = \&confess;
         *{ $caller . '::cluck' }   = \&crcluck;
     }
+
+    eval qq{
+        package $caller {
+            use TryCatch;
+        };
+    } unless ( grep { $_ eq 'notry' } @functions );
 
     for my $opt (@subclasses) {
         my $params = ( $opt =~ s/\(([^\)]+)\)// ) ? [$1] : [];
@@ -147,6 +154,7 @@ Instead of this:
     use IO::Handle;
     use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
+    use TryCatch;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -223,7 +231,11 @@ This skips using L<namespace::autoclean>.
 This skips importing the 4 L<Carp> methods: C<croak>, C<carp>, C<confess>,
 C<cluck>.
 
-=head2 Explicit Features and Bundles by Name
+=head2 C<notry>
+
+This skips importing the functionality of L<TryCatch>.
+
+=head1 BUNDLES
 
 You can always provide a list of explicit features and bundles from L<feature>.
 If provided, these will be enabled regardless of the other import flags set.
