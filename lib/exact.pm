@@ -42,6 +42,8 @@ my @function_list = qw(
 my @feature_list   = map { @$_ } values %features, values %deprecated, values %experiments;
 my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
+my @autoclean_parameters;
+
 sub import {
     shift;
     my ( @bundles, @functions, @features, @subclasses );
@@ -71,8 +73,6 @@ sub import {
     }
 
     mro::set_mro( scalar caller(), 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
-    namespace::autoclean->import( '-cleanee' => scalar caller() )
-        unless ( grep { $_ eq 'noautoclean' } @functions ) ;
 
     if (@bundles) {
         my ($bundle) = sort { $b <=> $a } @bundles;
@@ -82,12 +82,13 @@ sub import {
         feature->import( ':5.' . $perl_version );
     }
 
-    eval {
+    try {
         feature->import($_) for (@features);
         my @experiments = map { @{ $experiments{$_} } } grep { $_ <= $perl_version } keys %experiments;
         feature->import(@experiments) unless ( not @experiments or grep { $_ eq 'noexperiments' } @functions );
-    };
-    if ( my $err = $@ ) {
+    }
+    catch {
+        my $err = @$;
         $err =~ s/\s*at .+? line \d+\.\s+//;
         croak("$err via use of exact");
     }
@@ -112,7 +113,9 @@ sub import {
 
     for my $opt (@subclasses) {
         my $params = ( $opt =~ s/\(([^\)]+)\)// ) ? [$1] : [];
-        eval "require exact::$opt";
+
+        ( my $pm = $opt ) =~ s{::|'}{/}g;
+        require "exact/$pm.pm";
 
         if ( my $e = lcfirst($@) ) {
             my $v = __PACKAGE__->VERSION;
@@ -125,6 +128,23 @@ sub import {
 
         "exact::$opt"->import( scalar caller(), @$params ) if ( "exact::$opt"->can('import') );
     }
+
+    namespace::autoclean->import( -cleanee => scalar caller(), @autoclean_parameters )
+        unless ( grep { $_ eq 'noautoclean' } @functions ) ;
+}
+
+sub autoclean {
+    my $self = shift;
+
+    my $i = 0;
+    my $caller;
+    while (1) {
+        $caller = caller($i);
+        last if ( not $caller or $caller !~ /^exact\b/ );
+        $i++;
+    }
+
+    @autoclean_parameters = @_;
 }
 
 1;
@@ -252,6 +272,16 @@ variety of obvious forms:
 * 5.26
 * v5.26
 * 26
+
+=head1 AUTOCLEAN
+
+Normally, unless you include the C<noautoclean> flag, L<namespace::autoclean>
+will automatically clean your namespace. You can pass flags to autoclean via:
+
+    exact->autoclean( -except => [ qw( method_a method_b) ] );
+
+Note that for this to have any effect, it needs to be called from within your
+module's C<import> method.
 
 =head1 EXTENSIONS
 
