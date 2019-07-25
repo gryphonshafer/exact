@@ -136,8 +136,9 @@ module's `import` method.
 # EXTENSIONS
 
 It's possible to write extensions or plugins for [exact](https://metacpan.org/pod/exact) to provide
-context-specific behavior. To activate these extensions, you need to provide
-their named suffix as a parameter to the `use` of [exact](https://metacpan.org/pod/exact).
+context-specific behavior, provided you are using Perl version 5.14 or newer.
+To activate these extensions, you need to provide their named suffix as a
+parameter to the `use` of [exact](https://metacpan.org/pod/exact).
 
     # will load "exact" and "exact::class";
     use exact class;
