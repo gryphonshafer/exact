@@ -11,6 +11,23 @@ version 1.06
 
 # SYNOPSIS
 
+# DESCRIPTION
+
+[exact](https://metacpan.org/pod/exact) is a Perl pseudo pragma to enable strict, warnings, features, mro,
+and filehandle methods. The goal is to reduce header boilerplate, assuming
+defaults that seem to make sense but allowing overrides easily.
+
+By default, [exact](https://metacpan.org/pod/exact) will:
+
+- enable [strictures](https://metacpan.org/pod/strictures) (version 2)
+- load the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
+- load all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
+- set C3 style of [mro](https://metacpan.org/pod/mro)
+- use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
+- enable methods on filehandles
+- import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
+- import (kinda) [TryCatch](https://metacpan.org/pod/TryCatch) awesomeness
+
 Instead of this:
 
     use strict;
@@ -39,23 +56,6 @@ Or for finer control, add some trailing modifiers like a line of the following:
     use exact '5.20';
     use exact 5.16, nostrict, nowarnings, noc3, noutf8, noexperiments, noautoclean;
     use exact noexperiments, fc, signatures;
-
-# DESCRIPTION
-
-[exact](https://metacpan.org/pod/exact) is a Perl pseudo pragma to enable strict, warnings, features, mro,
-and filehandle methods. The goal is to reduce header boilerplate, assuming
-defaults that seem to make sense but allowing overrides easily.
-
-By default, [exact](https://metacpan.org/pod/exact) will:
-
-- enable [strictures](https://metacpan.org/pod/strictures) (version 2)
-- load the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
-- load all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
-- set C3 style of [mro](https://metacpan.org/pod/mro)
-- use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
-- enable methods on filehandles
-- import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- import (kinda) [TryCatch](https://metacpan.org/pod/TryCatch) awesomeness
 
 # IMPORT FLAGS
 
@@ -121,7 +121,9 @@ variety of obvious forms:
 - v5.26
 - 26
 
-# AUTOCLEAN
+# METHODS
+
+## `autoclean`
 
 Normally, unless you include the `noautoclean` flag, [namespace::autoclean](https://metacpan.org/pod/namespace::autoclean)
 will automatically clean your namespace. You can pass flags to autoclean via:
@@ -159,9 +161,11 @@ of [exact](https://metacpan.org/pod/exact), and any parameters passed.
 
     sub import {
         my ( $self, $caller, $params ) = @_;
-
-        no strict 'refs';
-        *{ $caller . '::example' } = \&example;
+        {
+            no strict 'refs';
+            *{ $caller . '::example' } = \&example;
+        }
+        exact->autoclean( -except => ['example'] );
     }
 
     sub example {

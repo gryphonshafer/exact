@@ -161,6 +161,9 @@ __END__
 
 =head1 SYNOPSIS
 
+=for test_synopsis
+no strict 'subs'
+
 Instead of this:
 
     use strict;
@@ -273,7 +276,9 @@ variety of obvious forms:
 * v5.26
 * 26
 
-=head1 AUTOCLEAN
+=head1 METHODS
+
+=head2 C<autoclean>
 
 Normally, unless you include the C<noautoclean> flag, L<namespace::autoclean>
 will automatically clean your namespace. You can pass flags to autoclean via:
@@ -311,9 +316,11 @@ of L<exact>, and any parameters passed.
 
     sub import {
         my ( $self, $caller, $params ) = @_;
-
-        no strict 'refs';
-        *{ $caller . '::example' } = \&example;
+        {
+            no strict 'refs';
+            *{ $caller . '::example' } = \&example;
+        }
+        exact->autoclean( -except => ['example'] );
     }
 
     sub example {
