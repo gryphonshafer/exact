@@ -159,13 +159,6 @@ __END__
 
 =end :badges
 
-=begin :prelude
-
-=for test_synopsis
-no strict 'subs'
-
-=end :prelude
-
 =head1 SYNOPSIS
 
 Instead of this:
