@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.07      2019-08-08 06:44:27-07:00 America/Los_Angeles
         - POD bug fixes
 
 1.06      2019-07-25 15:15:06-07:00 America/Los_Angeles
