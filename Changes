@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - POD bug fixes
 
 1.06      2019-07-25 15:15:06-07:00 America/Los_Angeles
         - Extensions support
