@@ -5,7 +5,7 @@ use 5.010;
 use strict;
 use warnings;
 use namespace::autoclean;
-use TryCatch;
+use Try::Tiny;
 
 # VERSION
 
@@ -88,10 +88,10 @@ sub import {
         feature->import(@experiments) unless ( not @experiments or grep { $_ eq 'noexperiments' } @functions );
     }
     catch {
-        my $err = @$;
+        my $err = $_;
         $err =~ s/\s*at .+? line \d+\.\s+//;
         croak("$err via use of exact");
-    }
+    };
 
     warnings->unimport('experimental')
         unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
@@ -107,7 +107,7 @@ sub import {
 
     eval qq{
         package $caller {
-            use TryCatch;
+            use Try::Tiny;
         };
     } unless ( grep { $_ eq 'notry' } @functions );
 
@@ -174,7 +174,7 @@ Instead of this:
     use IO::Handle;
     use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
-    use TryCatch;
+    use Try::Tiny;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -206,7 +206,7 @@ By default, L<exact> will:
 * use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 * enable methods on filehandles
 * import L<Carp>'s 4 methods
-* import (kinda) L<TryCatch> awesomeness
+* import (kinda) L<Try::Tiny>
 
 =head1 IMPORT FLAGS
 
@@ -255,7 +255,7 @@ C<cluck>.
 
 =head2 C<notry>
 
-This skips importing the functionality of L<TryCatch>.
+This skips importing the functionality of L<Try::Tiny>.
 
 =head1 BUNDLES
 

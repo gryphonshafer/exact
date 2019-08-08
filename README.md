@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.07
+version 1.08
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -24,7 +24,7 @@ Instead of this:
     use IO::Handle;
     use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
-    use TryCatch;
+    use Try::Tiny;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -55,7 +55,7 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - enable methods on filehandles
 - import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- import (kinda) [TryCatch](https://metacpan.org/pod/TryCatch) awesomeness
+- import (kinda) [Try::Tiny](https://metacpan.org/pod/Try::Tiny)
 
 # IMPORT FLAGS
 
@@ -104,7 +104,7 @@ This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak
 
 ## `notry`
 
-This skips importing the functionality of [TryCatch](https://metacpan.org/pod/TryCatch).
+This skips importing the functionality of [Try::Tiny](https://metacpan.org/pod/Try::Tiny).
 
 # BUNDLES
 
