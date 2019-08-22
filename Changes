@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.09      2019-08-22 16:20:27-07:00 America/Los_Angeles
         - Changed to use "-" prepending flags for compile check w00t
         - Add back dist.ini components
 
