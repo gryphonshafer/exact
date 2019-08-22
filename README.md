@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.08
+version 1.09
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -36,9 +36,9 @@ Type this:
 
 Or for finer control, add some trailing modifiers like a line of the following:
 
+    use exact -noexperiments, -fc, -signatures;
+    use exact 5.16, -nostrict, -nowarnings, -noc3, -noutf8, -noautoclean;
     use exact '5.20';
-    use exact 5.16, nostrict, nowarnings, noc3, noutf8, noexperiments, noautoclean;
-    use exact noexperiments, fc, signatures;
 
 # DESCRIPTION
 
@@ -111,7 +111,7 @@ This skips importing the functionality of [Try::Tiny](https://metacpan.org/pod/T
 You can always provide a list of explicit features and bundles from [feature](https://metacpan.org/pod/feature).
 If provided, these will be enabled regardless of the other import flags set.
 
-    use exact noexperiments, fc, signatures;
+    use exact -noexperiments, -fc, -signatures;
 
 Bundles provided can be exactly like those described in [feature](https://metacpan.org/pod/feature) or in a
 variety of obvious forms:
@@ -141,7 +141,7 @@ To activate these extensions, you need to provide their named suffix as a
 parameter to the `use` of [exact](https://metacpan.org/pod/exact).
 
     # will load "exact" and "exact::class";
-    use exact class;
+    use exact -class;
 
     # will load "exact" and "exact::role" and turn off UTF8 features;
     use exact role, noutf8;
