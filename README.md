@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.09
+version 1.10
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -43,8 +43,9 @@ Or for finer control, add some trailing modifiers like a line of the following:
 # DESCRIPTION
 
 [exact](https://metacpan.org/pod/exact) is a Perl pseudo pragma to enable strict, warnings, features, mro,
-and filehandle methods. The goal is to reduce header boilerplate, assuming
-defaults that seem to make sense but allowing overrides easily.
+and filehandle methods along with a lot of other things, plus allow for easy
+extension via `exact::*` classes. The goal is to reduce header boilerplate,
+assuming defaults that seem to make sense but allowing overrides easily.
 
 By default, [exact](https://metacpan.org/pod/exact) will:
 
@@ -55,7 +56,7 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - enable methods on filehandles
 - import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- import (kinda) [Try::Tiny](https://metacpan.org/pod/Try::Tiny)
+- import [Try::Tiny](https://metacpan.org/pod/Try::Tiny) (kinda)
 
 # IMPORT FLAGS
 
@@ -121,18 +122,6 @@ variety of obvious forms:
 - v5.26
 - 26
 
-# METHODS
-
-## `autoclean`
-
-Normally, unless you include the `noautoclean` flag, [namespace::autoclean](https://metacpan.org/pod/namespace::autoclean)
-will automatically clean your namespace. You can pass flags to autoclean via:
-
-    exact->autoclean( -except => [ qw( method_a method_b) ] );
-
-Note that for this to have any effect, it needs to be called from within your
-module's `import` method.
-
 # EXTENSIONS
 
 It's possible to write extensions or plugins for [exact](https://metacpan.org/pod/exact) to provide
@@ -144,7 +133,7 @@ parameter to the `use` of [exact](https://metacpan.org/pod/exact).
     use exact -class;
 
     # will load "exact" and "exact::role" and turn off UTF8 features;
-    use exact role, noutf8;
+    use exact -role, -noutf8;
 
 It's possible to provide parameters to the `import` method of the extension.
 
@@ -162,11 +151,7 @@ of [exact](https://metacpan.org/pod/exact), and any parameters passed.
 
     sub import {
         my ( $self, $caller, $params ) = @_;
-        {
-            no strict 'refs';
-            *{ $caller . '::example' } = \&example;
-        }
-        exact->autoclean( -except => ['example'] );
+        exact->monkey_patch( $caller, 'example' => \&example );
     }
 
     sub example {
@@ -174,6 +159,61 @@ of [exact](https://metacpan.org/pod/exact), and any parameters passed.
     }
 
     1;
+
+# PARENTS
+
+You can use `exact` to setup inheritance as follows:
+
+    use exact 'SomeModule', 'SomeOtherModule';
+
+This is roughly equivalent to:
+
+    use exact;
+    use parent 'SomeModule', 'SomeOtherModule';
+
+See also the `no_parent` method.
+
+# METHODS
+
+## `monkey_patch`
+
+Monkey patch functions into a given package.
+
+    exact->monkey_patch( 'PackageName', add => sub { return $_[0] + $_[1] } );
+    exact->monkey_patch(
+        'PackageName',
+        one   => sub { return 1 },
+        two   => sub { return 2 },
+        three => sub { return 3 },
+    );
+
+## `add_isa`
+
+This method will add a given parent to the @ISA of a given child.
+
+    exact->add_isa( 'SuperClassParent', 'SubClassChild' );
+
+## `no_parent`
+
+Normally, if you specify a parent, it'll be added as a parent by inclusion in
+`@INC`. If you don't want to skip `@INC` inclusion, you can call `no_parent`
+in the `import` of the module being specified as a parent.
+
+    sub import {
+        exact->no_parent;
+    }
+
+## `late_parent`
+
+There may be a situation where you need an included parent to be listed last in
+`@INC` (at least relative to other parents). Normally, you'd do this by putting
+the name last in the list of modules. However, if for some reason you can't do
+that, you can call `late_parent` from the `import` of the parent that should
+be delayed in `@INC` inclusion.
+
+    sub import {
+        exact->late_parent;
+    }
 
 # SEE ALSO
 
