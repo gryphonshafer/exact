@@ -220,9 +220,7 @@ be delayed in `@INC` inclusion.
 You can look for additional information at:
 
 - [GitHub](https://github.com/gryphonshafer/exact)
-- [CPAN](http://search.cpan.org/dist/exact)
 - [MetaCPAN](https://metacpan.org/pod/exact)
-- [AnnoCPAN](http://annocpan.org/dist/exact)
 - [Travis CI](https://travis-ci.org/gryphonshafer/exact)
 - [Coveralls](https://coveralls.io/r/gryphonshafer/exact)
 - [CPANTS](http://cpants.cpanauthors.org/dist/exact)
