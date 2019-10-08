@@ -422,9 +422,7 @@ You can look for additional information at:
 
 =for :list
 * L<GitHub|https://github.com/gryphonshafer/exact>
-* L<CPAN|http://search.cpan.org/dist/exact>
 * L<MetaCPAN|https://metacpan.org/pod/exact>
-* L<AnnoCPAN|http://annocpan.org/dist/exact>
 * L<Travis CI|https://travis-ci.org/gryphonshafer/exact>
 * L<Coveralls|https://coveralls.io/r/gryphonshafer/exact>
 * L<CPANTS|http://cpants.cpanauthors.org/dist/exact>
