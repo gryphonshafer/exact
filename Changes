@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Prevent duplicate add_isa() calls
 
 1.10      2019-10-06 16:27:22-07:00 America/Los_Angeles
         - Add inheritance capability

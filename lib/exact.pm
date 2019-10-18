@@ -181,7 +181,7 @@ sub add_isa {
     my ( $self, $parent, $child ) = @_;
     {
         no strict 'refs';
-        push( @{"${child}::ISA"}, $parent );
+        push( @{"${child}::ISA"}, $parent ) unless ( grep { $_ eq $parent } @{"${child}::ISA"} );
     }
     return;
 }
