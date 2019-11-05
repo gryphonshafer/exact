@@ -95,7 +95,7 @@ sub import {
         croak("$err via use of exact");
     };
 
-    monkey_patch( $self, $caller, ( map { $_ => \&$_ } qw( croak carp confess cluck ) ) )
+    monkey_patch( $self, $caller, ( map { $_ => \&{ 'Carp::' . $_ } } qw( croak carp confess cluck ) ) )
         unless ( grep { $_ eq 'nocarp' } @functions );
 
     eval qq{
