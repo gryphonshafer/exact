@@ -7,6 +7,7 @@ use warnings;
 use namespace::autoclean;
 use Try::Tiny;
 use Sub::Util 'set_subname';
+use Import::Into;
 
 # VERSION
 
@@ -72,6 +73,7 @@ sub import {
     unless ( grep { $_ eq 'noutf8' } @functions ) {
         utf8->import;
         binmode( $_, ':utf8' ) for ( *STDIN, *STDERR, *STDOUT );
+        'open'->import::into( $caller, ':std', ':utf8' );
     }
 
     mro::set_mro( $caller, 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );

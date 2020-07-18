@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.12
+version 1.13
 
 [![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
 [![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
@@ -56,7 +56,7 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - enable methods on filehandles
 - import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- import [Try::Tiny](https://metacpan.org/pod/Try::Tiny) (kinda)
+- import [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) (kinda)
 
 # IMPORT FLAGS
 
@@ -96,7 +96,7 @@ disabling step.
 
 ## `noautoclean`
 
-This skips using [namespace::autoclean](https://metacpan.org/pod/namespace::autoclean).
+This skips using [namespace::autoclean](https://metacpan.org/pod/namespace%3A%3Aautoclean).
 
 ## `nocarp`
 
@@ -105,7 +105,7 @@ This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak
 
 ## `notry`
 
-This skips importing the functionality of [Try::Tiny](https://metacpan.org/pod/Try::Tiny).
+This skips importing the functionality of [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny).
 
 # BUNDLES
 
@@ -232,7 +232,7 @@ Gryphon Shafer <gryphon@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2019 by Gryphon Shafer.
+This software is copyright (c) 2020 by Gryphon Shafer.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
