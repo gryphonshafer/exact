@@ -4,10 +4,10 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.13
+version 1.14
 
-[![Build Status](https://travis-ci.org/gryphonshafer/exact.svg)](https://travis-ci.org/gryphonshafer/exact)
-[![Coverage Status](https://coveralls.io/repos/gryphonshafer/exact/badge.png)](https://coveralls.io/r/gryphonshafer/exact)
+[![build](https://github.com/gryphonshafer/exact/workflows/build/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Abuild)
+[![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
 
 # SYNOPSIS
 
@@ -221,8 +221,8 @@ You can look for additional information at:
 
 - [GitHub](https://github.com/gryphonshafer/exact)
 - [MetaCPAN](https://metacpan.org/pod/exact)
-- [Travis CI](https://travis-ci.org/gryphonshafer/exact)
-- [Coveralls](https://coveralls.io/r/gryphonshafer/exact)
+- [GitHub Actions](https://github.com/gryphonshafer/exact/actions)
+- [Codecov](https://codecov.io/gh/gryphonshafer/exact)
 - [CPANTS](http://cpants.cpanauthors.org/dist/exact)
 - [CPAN Testers](http://www.cpantesters.org/distro/T/exact.html)
 
@@ -232,7 +232,7 @@ Gryphon Shafer <gryphon@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2020 by Gryphon Shafer.
+This software is copyright (c) 2021 by Gryphon Shafer.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
