@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.14
+version 1.15
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -24,7 +24,7 @@ Instead of this:
     use IO::Handle;
     use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
-    use Try::Tiny;
+    use Syntax::Keyword::Try;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -56,7 +56,7 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - enable methods on filehandles
 - import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- import [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) (kinda)
+- cause [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry) to import its methods
 
 # IMPORT FLAGS
 
@@ -105,7 +105,12 @@ This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak
 
 ## `notry`
 
-This skips importing the functionality of [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny).
+This skips importing the functionality of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry).
+
+## `trytiny`
+
+If you want to use [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) instead of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry), this is how.
+Note that if you specify both `trytiny` and `notry`, the latter will win.
 
 # BUNDLES
 
@@ -214,6 +219,38 @@ be delayed in `@INC` inclusion.
     sub import {
         exact->late_parent;
     }
+
+## `export`
+
+This method performs work similar to using [Exporter](https://metacpan.org/pod/Exporter)'s `@EXPORT`, but only
+for methods. For a given method within your package, it will be exported to the
+namespace that uses your package.
+
+    exact->export( 'method', 'other_method' );
+
+## `exportable`
+
+This method performs work similar to using [Exporter](https://metacpan.org/pod/Exporter)'s `@EXPORT_OK`, but only
+for methods. For a given method within your package, it will be exported to the
+namespace that uses your package.
+
+    exact->exportable( 'method', 'other_method' );
+
+It's possible to provide hashrefs as input to this method, and doing so provides
+the means to setup groups of methods a consuming namespace can import.
+
+    exact->exportable(
+        'method',
+        'other_method',
+        {
+            ':stuff' => [ qw( method other_method ) ],
+            ':all'   => [ qw( method other_method some_additional_method ) ],
+        }
+    );
+
+In the consuming namespace, you can then write:
+
+    use YourPackage ':stuff'; # imports both "method" and "other_method"
 
 # SEE ALSO
 
