@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.15      2021-02-04 15:41:42-08:00 America/Los_Angeles
         - Add export() and exportable() methods
         - Switch from Try::Tiny to Syntax::Keyword::Try
 
