@@ -5,9 +5,9 @@ use 5.014;
 use strict;
 use warnings;
 use namespace::autoclean;
-use Try::Tiny;
-use Sub::Util 'set_subname';
 use Import::Into;
+use Sub::Util 'set_subname';
+use Syntax::Keyword::Try;
 
 # VERSION
 
@@ -16,6 +16,7 @@ use utf8       ();
 use mro        ();
 use IO::File   ();
 use IO::Handle ();
+use Try::Tiny  ();
 use Carp       qw( croak carp confess cluck );
 
 my %features = (
@@ -38,7 +39,8 @@ my %experiments = (
 );
 
 my @function_list = qw(
-    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean nocarp notry
+    nostrict nowarnings noutf8 noc3 nobundle noexperiments noskipexperimentalwarnings noautoclean nocarp
+    notry trytiny
 );
 
 my @feature_list   = map { @$_ } values %features, values %deprecated, values %experiments;
@@ -91,20 +93,24 @@ sub import {
         my @experiments = map { @{ $experiments{$_} } } grep { $_ <= $perl_version } keys %experiments;
         feature->import(@experiments) unless ( not @experiments or grep { $_ eq 'noexperiments' } @functions );
     }
-    catch {
-        my $err = $_;
+    catch ($err) {
         $err =~ s/\s*at .+? line \d+\.\s+//;
         croak("$err via use of exact");
-    };
+    }
 
     monkey_patch( $self, $caller, ( map { $_ => \&{ 'Carp::' . $_ } } qw( croak carp confess cluck ) ) )
         unless ( grep { $_ eq 'nocarp' } @functions );
+
+    my $trytiny = ( grep { $_ eq 'trytiny' } @functions ) ? 1 : 0;
+    my $notry   = ( grep { $_ eq 'notry'   } @functions ) ? 1 : 0;
+
+    Syntax::Keyword::Try->import_into($caller) unless ( $trytiny or $notry );
 
     eval qq{
         package $caller {
             use Try::Tiny;
         };
-    } unless ( grep { $_ eq 'notry' } @functions );
+    } if ( $trytiny and not $notry );
 
     my @late_parents = ();
 
@@ -120,10 +126,9 @@ sub import {
             } );
         }
         catch {
-            croak($_) unless ( index( $_, q{Can't locate } ) == 0 );
-            $failed_require = 1;
-        };
-        return 0 if $failed_require;
+            croak($@) unless ( index( $@, q{Can't locate } ) == 0 );
+            return 0;
+        }
 
         ( $no_parent, $late_parent ) = ( undef, undef );
 
@@ -278,7 +283,7 @@ Instead of this:
     use IO::Handle;
     use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
-    use Try::Tiny;
+    use Syntax::Keyword::Try;
 
     no warnings "experimental::signatures";
     no warnings "experimental::refaliasing";
@@ -311,7 +316,7 @@ By default, L<exact> will:
 * use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 * enable methods on filehandles
 * import L<Carp>'s 4 methods
-* import L<Try::Tiny> (kinda)
+* cause L<Syntax::Keyword::Try> to import its methods
 
 =head1 IMPORT FLAGS
 
@@ -360,7 +365,12 @@ C<cluck>.
 
 =head2 C<notry>
 
-This skips importing the functionality of L<Try::Tiny>.
+This skips importing the functionality of L<Syntax::Keyword::Try>.
+
+=head2 C<trytiny>
+
+If you want to use L<Try::Tiny> instead of L<Syntax::Keyword::Try>, this is how.
+Note that if you specify both C<trytiny> and C<notry>, the latter will win.
 
 =head1 BUNDLES
 
