@@ -198,6 +198,59 @@ sub late_parent {
     return;
 }
 
+sub _patch_import {
+    my ( $type, $self, @names ) = @_;
+
+    my $target          = ( caller(1) )[0];
+    my $original_import = $target->can('import');
+
+    my %groups;
+    if ( $type eq 'provide' ) {
+        %groups = map { %$_ } grep { ref $_ eq 'HASH' } @names;
+        @names = grep { not ref $_ } @names;
+    }
+
+    monkey_patch(
+        $self,
+        $target,
+        import => sub {
+            my ( $package, @exports ) = @_;
+
+            $original_import->(@_) if ($original_import);
+
+            if ( $type eq 'force' ) {
+                @exports = @names;
+            }
+            elsif ( $type eq 'provide' ) {
+                @exports = grep { defined } map {
+                    my $name = $_;
+
+                    ( grep { $name eq $_ } @names ) ? $name                   :
+                    ( exists $groups{$name}       ) ? ( @{ $groups{$name} } ) : undef;
+                } @exports;
+            }
+
+            monkey_patch(
+                $package,
+                ( caller(0) )[0],
+                map { $_ => \&{ $package . '::' . $_ } } @exports
+            );
+
+            return;
+        },
+    );
+}
+
+sub export {
+    _patch_import( 'force', @_ );
+    return;
+}
+
+sub exportable {
+    _patch_import( 'provide', @_ );
+    return;
+}
+
 1;
 __END__
 =pod
@@ -417,6 +470,38 @@ be delayed in C<@INC> inclusion.
     sub import {
         exact->late_parent;
     }
+
+=head2 C<export>
+
+This method performs work similar to using L<Exporter>'s C<@EXPORT>, but only
+for methods. For a given method within your package, it will be exported to the
+namespace that uses your package.
+
+    exact->export( 'method', 'other_method' );
+
+=head2 C<exportable>
+
+This method performs work similar to using L<Exporter>'s C<@EXPORT_OK>, but only
+for methods. For a given method within your package, it will be exported to the
+namespace that uses your package.
+
+    exact->exportable( 'method', 'other_method' );
+
+It's possible to provide hashrefs as input to this method, and doing so provides
+the means to setup groups of methods a consuming namespace can import.
+
+    exact->exportable(
+        'method',
+        'other_method',
+        {
+            ':stuff' => [ qw( method other_method ) ],
+            ':all'   => [ qw( method other_method some_additional_method ) ],
+        }
+    );
+
+In the consuming namespace, you can then write:
+
+    use YourPackage ':stuff'; # imports both "method" and "other_method"
 
 =head1 SEE ALSO
 
