@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Set Syntax::Keyword::Try minimum version to 0.18
 
 1.15      2021-02-04 15:41:42-08:00 America/Los_Angeles
         - Add export() and exportable() methods
