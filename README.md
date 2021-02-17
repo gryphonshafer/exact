@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.16
+version 1.17
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -17,8 +17,9 @@ Instead of this:
     use warnings;
     use utf8;
     use open ':std', ':utf8';
-    use feature ':5.23';
-    use feature qw( signatures refaliasing bitwise );
+    use feature ':5.32';
+    use feature qw( signatures refaliasing bitwise isa );
+    no feature 'indirect';
     use mro 'c3';
     use IO::File;
     use IO::Handle;
@@ -50,8 +51,10 @@ assuming defaults that seem to make sense but allowing overrides easily.
 By default, [exact](https://metacpan.org/pod/exact) will:
 
 - enable [strictures](https://metacpan.org/pod/strictures) (version 2)
-- load the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
-- load all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
+- activate the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
+- activate all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
+- activate the `isa` feature (if Perl version is 5.32 or greater)
+- deactivate the `indirect` feature
 - set C3 style of [mro](https://metacpan.org/pod/mro)
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - enable methods on filehandles
@@ -112,6 +115,11 @@ This skips importing the functionality of [Syntax::Keyword::Try](https://metacpa
 If you want to use [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) instead of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry), this is how.
 Note that if you specify both `trytiny` and `notry`, the latter will win.
 
+## `noisa`
+
+The `isa` feature is activated by default if the Perl version is 5.32 or
+greater. If you want not that, specify `noisa`.
+
 # BUNDLES
 
 You can always provide a list of explicit features and bundles from [feature](https://metacpan.org/pod/feature).
@@ -126,6 +134,18 @@ variety of obvious forms:
 - 5.26
 - v5.26
 - 26
+
+Note that bundles are exactly the same as what's in [feature](https://metacpan.org/pod/feature), so for any
+feature not part of a version bundle in [feature](https://metacpan.org/pod/feature), you won't pick up that
+feature with a bundle unless you explicitly declare the feature.
+
+The exception to this is `isa`, which is available in Perl 5.32 and greater but
+not included in the 5.32 bundle. However, `isa` is explicitly included if your
+Perl version is 5.32 or greater unless you specify `noisa`.
+
+Note also that the `indirect` feature is unimported by default, which is
+counter to the non-exact default way, which is to import it. You can deunimport
+`indirect` by explicitly specifying `indirect`.
 
 # EXTENSIONS
 
