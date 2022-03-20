@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Minor documentation update
 
 1.17      2021-02-16 22:20:16-08:00 America/Los_Angeles
         - Add feature isa support
