@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.19
+version 1.20
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -15,21 +15,17 @@ Instead of this:
 
     use strict;
     use warnings;
+    use feature ':all';
+    no warnings "experimental";
     use utf8;
     use open ':std', ':utf8';
-    use feature ':5.32';
-    use feature qw( signatures refaliasing bitwise isa );
-    no feature 'indirect';
     use mro 'c3';
     use IO::File;
     use IO::Handle;
-    use namespace::autoclean;
     use Carp qw( croak carp confess cluck );
     use Syntax::Keyword::Try;
-
-    no warnings "experimental::signatures";
-    no warnings "experimental::refaliasing";
-    no warnings "experimental::bitwise";
+    use PerlX::Maybe ':all';
+    use namespace::autoclean;
 
 Type this:
 
@@ -37,7 +33,7 @@ Type this:
 
 Or for finer control, add some trailing modifiers like a line of the following:
 
-    use exact -noexperiments, -fc, -signatures;
+    use exact -nofeatures, -signatures, -try, -say, -state;
     use exact 5.16, -nostrict, -nowarnings, -noc3, -noutf8, -noautoclean;
     use exact '5.20';
 
@@ -51,15 +47,14 @@ assuming defaults that seem to make sense but allowing overrides easily.
 By default, [exact](https://metacpan.org/pod/exact) will:
 
 - enable [strictures](https://metacpan.org/pod/strictures) (version 2)
-- activate the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
-- activate all experimental [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
-- activate the `isa` feature (if Perl version is 5.32 or greater)
-- deactivate the `indirect` feature
-- set C3 style of [mro](https://metacpan.org/pod/mro)
+- enable all available [feature](https://metacpan.org/pod/feature)s and switch off experimental warnings
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
+- set C3 style of [mro](https://metacpan.org/pod/mro)
 - enable methods on filehandles
 - import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
-- cause [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry) to import its methods
+- implement a `try...catch...finally` block solution based on Perl version
+- import [PerlX::Maybe](https://metacpan.org/pod/PerlX%3A%3AMaybe)'s 4 methods
+- autoclean the namespace via [namespace::autoclean](https://metacpan.org/pod/namespace%3A%3Aautoclean)
 
 # IMPORT FLAGS
 
@@ -73,6 +68,17 @@ This skips turning on the [strict](https://metacpan.org/pod/strict) pragma.
 
 This skips turning on the [warnings](https://metacpan.org/pod/warnings) pragma.
 
+## `nofeatures`
+
+Normally, [exact](https://metacpan.org/pod/exact) will enable all available [feature](https://metacpan.org/pod/feature)s. Applying `nofeatures`
+causes this behavior to be skipped. You can still explicitly set features and/or
+bundles.
+
+## `noskipexperimentalwarnings`
+
+Normally, [exact](https://metacpan.org/pod/exact) will disable experimental warnings. This skips that
+disabling step.
+
 ## `noutf8`
 
 This skips turning on UTF8 in the source code context. Also skips setting
@@ -82,50 +88,39 @@ STDIN, STDOUT, and STDERR to expect UTF8.
 
 This skips setting C3 [mro](https://metacpan.org/pod/mro).
 
-## `nobundle`
+## `nocarp`
 
-Normally, [exact](https://metacpan.org/pod/exact) will look at your current version and find the highest
-supported [feature](https://metacpan.org/pod/feature) bundle and enable it. Applying `nobundle` causes this
-behavior to be skipped. You can still explicitly set bundles yourself.
+This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak`, `carp`, `confess`, and
+`cluck`.
 
-## `noexperiments`
+## `notry`
 
-This skips enabling all features currently labled experimental by [feature](https://metacpan.org/pod/feature).
+This skips setting up `try...catch...finally` support. This support is provided
+either by the native Perl `try` feature if available or else by importing the
+functionality of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry) otherwise.
 
-## `noskipexperimentalwarnings`
+## `trytiny`
 
-Normally, [exact](https://metacpan.org/pod/exact) will disable experimental warnings. This skips that
-disabling step.
+If you want to use [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) instead of either native Perl's `try` feature
+or [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry), this is how.
+
+## `nomaybe`
+
+This skips loading the 4 [namespace::autoclean](https://metacpan.org/pod/namespace%3A%3Aautoclean) methods: `maybe`, `provided`,
+`provided_deref`, and `provided_deref_with_maybe`.
 
 ## `noautoclean`
 
 This skips using [namespace::autoclean](https://metacpan.org/pod/namespace%3A%3Aautoclean).
 
-## `nocarp`
-
-This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak`, `carp`, `confess`,
-`cluck`.
-
-## `notry`
-
-This skips importing the functionality of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry).
-
-## `trytiny`
-
-If you want to use [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) instead of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry), this is how.
-Note that if you specify both `trytiny` and `notry`, the latter will win.
-
-## `noisa`
-
-The `isa` feature is activated by default if the Perl version is 5.32 or
-greater. If you want not that, specify `noisa`.
-
 # BUNDLES
 
-You can always provide a list of explicit features and bundles from [feature](https://metacpan.org/pod/feature).
-If provided, these will be enabled regardless of the other import flags set.
+By default, the "all" bundle is enabled. You can skip this by including an
+explicit bundle name or `nofeatures`. You can enable and disable features.
 
-    use exact -noexperiments, -fc, -signatures;
+    use exact -nofeatures, -signatures, -try, -say, -state;
+    use exact 5.16, -nosay, -nostate;
+    use exact '5.20';
 
 Bundles provided can be exactly like those described in [feature](https://metacpan.org/pod/feature) or in a
 variety of obvious forms:
@@ -138,14 +133,6 @@ variety of obvious forms:
 Note that bundles are exactly the same as what's in [feature](https://metacpan.org/pod/feature), so for any
 feature not part of a version bundle in [feature](https://metacpan.org/pod/feature), you won't pick up that
 feature with a bundle unless you explicitly declare the feature.
-
-The exception to this is `isa`, which is available in Perl 5.32 and greater but
-not included in the 5.32 bundle. However, `isa` is explicitly included if your
-Perl version is 5.32 or greater unless you specify `noisa`.
-
-Note also that the `indirect` feature is unimported by default, which is
-counter to the non-exact default way, which is to import it. You can deunimport
-`indirect` by explicitly specifying `indirect`.
 
 # EXTENSIONS
 

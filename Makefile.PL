@@ -21,6 +21,7 @@ my %WriteMakefileArgs = (
     "IO::File" => 0,
     "IO::Handle" => 0,
     "Import::Into" => 0,
+    "PerlX::Maybe" => 0,
     "Sub::Util" => 0,
     "Syntax::Keyword::Try" => "0.18",
     "Try::Tiny" => 0,
@@ -38,15 +39,7 @@ my %WriteMakefileArgs = (
     "Test2::V0" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "1.19
-- enable [strictures](https://metacpan.org/pod/strictures) (2)
-- activate the latest [feature](https://metacpan.org/pod/feature) bundle supported by the current Perl version
-- activate the `isa` feature (if Perl is 5.32 or greater)
-Normally, [exact](https://metacpan.org/pod/exact) will look at your current and find the highest
-The `isa` feature is activated by default if the Perl is 5.32 or
-feature not part of a bundle in [feature](https://metacpan.org/pod/feature), you won't pick up that
-Perl is 5.32 or greater unless you specify `noisa`.
-context-specific behavior, provided you are using Perl 5.14 or newer.",
+  "VERSION" => "1.20",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -60,6 +53,7 @@ my %FallbackPrereqs = (
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
   "Import::Into" => 0,
+  "PerlX::Maybe" => 0,
   "Sub::Util" => 0,
   "Syntax::Keyword::Try" => "0.18",
   "Test2::V0" => 0,
