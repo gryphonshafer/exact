@@ -11,13 +11,14 @@ use Syntax::Keyword::Try;
 
 # VERSION
 
-use feature    ();
-use utf8       ();
-use mro        ();
-use Carp       qw( croak carp confess cluck );
-use IO::File   ();
-use IO::Handle ();
-use Try::Tiny  ();
+use feature      ();
+use utf8         ();
+use mro          ();
+use Carp         qw( croak carp confess cluck );
+use IO::File     ();
+use IO::Handle   ();
+use Try::Tiny    ();
+use PerlX::Maybe ();
 
 my ($perl_version) = $^V =~ /^v5\.(\d+)/;
 
@@ -28,7 +29,7 @@ my $features_available = ( %feature::feature_bundle and $feature::feature_bundle
 my $functions_available = [ qw(
     nostrict nowarnings
     nofeatures nobundle noskipexperimentalwarnings
-    noutf8 noc3 nocarp notry trytiny noautoclean
+    noutf8 noc3 nocarp notry trytiny nomaybe noautoclean
 ) ];
 
 my $functions_deprecated = ['noexperiments'];
@@ -105,6 +106,10 @@ sub import {
             use Try::Tiny;
         };
     } if ( grep { $_ eq 'trytiny' } @functions );
+
+    monkey_patch( $self, $caller, ( map { $_ => \&{ 'PerlX::Maybe::' . $_ } } qw(
+        maybe provided provided_deref provided_deref_with_maybe
+    ) ) ) unless ( grep { $_ eq 'nomaybe' } @functions );
 
     my @late_parents = ();
     my $use          = sub {
@@ -271,6 +276,7 @@ Instead of this:
     use IO::Handle;
     use Carp qw( croak carp confess cluck );
     use Syntax::Keyword::Try;
+    use PerlX::Maybe ':all';
     use namespace::autoclean;
 
 Type this:
@@ -300,6 +306,8 @@ By default, L<exact> will:
 * enable methods on filehandles
 * import L<Carp>'s 4 methods
 * implement a C<try...catch...finally> block solution based on Perl version
+* import L<PerlX::Maybe>'s 4 methods
+* autoclean the namespace via L<namespace::autoclean>
 
 =head1 IMPORT FLAGS
 
@@ -335,7 +343,7 @@ This skips setting C3 L<mro>.
 
 =head2 C<nocarp>
 
-This skips importing the 4 L<Carp> methods: C<croak>, C<carp>, C<confess>,
+This skips importing the 4 L<Carp> methods: C<croak>, C<carp>, C<confess>, and
 C<cluck>.
 
 =head2 C<notry>
@@ -348,6 +356,11 @@ functionality of L<Syntax::Keyword::Try> otherwise.
 
 If you want to use L<Try::Tiny> instead of either native Perl's C<try> feature
 or L<Syntax::Keyword::Try>, this is how.
+
+=head2 C<nomaybe>
+
+This skips loading the 4 L<namespace::autoclean> methods: C<maybe>, C<provided>,
+C<provided_deref>, and C<provided_deref_with_maybe>.
 
 =head2 C<noautoclean>
 

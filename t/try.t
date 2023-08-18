@@ -1,5 +1,5 @@
 use Test2::V0;
-use exact -noautoclean;
+use exact;
 
 ok(
     lives {
