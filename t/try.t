@@ -6,7 +6,7 @@ ok(
         try {
             1;
         }
-        catch {
+        catch ($e) {
             1;
         };
     },
