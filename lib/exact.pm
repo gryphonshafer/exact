@@ -84,9 +84,6 @@ sub import {
     feature->import($_)   for (@features);
     feature->unimport($_) for (@nofeatures);
 
-    warnings->unimport('experimental')
-        unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
-
     unless ( grep { $_ eq 'noutf8' } @functions ) {
         utf8->import;
         binmode( $_, ':utf8' ) for ( *STDIN, *STDERR, *STDOUT );
@@ -172,6 +169,9 @@ sub import {
         );
     }
     $self->add_isa(@$_) for @late_parents;
+
+    warnings->unimport('experimental')
+        unless ( $perl_version < 18 or grep { $_ eq 'noskipexperimentalwarnings' } @functions );
 
     namespace::autoclean->import( -cleanee => $caller ) unless ( grep { $_ eq 'noautoclean' } @functions );
 }
