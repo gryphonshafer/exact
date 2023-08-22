@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.20
+version 1.21
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -133,6 +133,19 @@ variety of obvious forms:
 Note that bundles are exactly the same as what's in [feature](https://metacpan.org/pod/feature), so for any
 feature not part of a version bundle in [feature](https://metacpan.org/pod/feature), you won't pick up that
 feature with a bundle unless you explicitly declare the feature.
+
+## `class` versus `cor`
+
+To avoid a conflict between the [exact::class](https://metacpan.org/pod/exact%3A%3Aclass) extension (see below) and the
+`class` feature available as of Perl 5.37, the `class` feature gets handled
+slightly differently from other features. If using Perl 5.37 or newer and
+nothing is specified, the default behavior is to enable the `class` feature.
+
+To explicitly enable the feature, though, you must use the `cor` flag.
+
+    use exact -nofeatures, -cor;
+
+To explicitly disable the feature, use the `nocor` flag.
 
 # EXTENSIONS
 

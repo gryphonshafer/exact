@@ -43,7 +43,16 @@ sub import {
     for (@_) {
         ( my $opt = $_ ) =~ s/^\-//;
 
-        if ( grep { $_ eq $opt } @$features_available ) {
+        if ( $opt eq 'class' ) {
+            push( @classes, $opt );
+        }
+        elsif ( $opt eq 'cor' ) {
+            push( @features, 'class' );
+        }
+        elsif ( $opt eq 'nocor' ) {
+            push( @nofeatures, 'class' );
+        }
+        elsif ( grep { $_ eq $opt } @$features_available ) {
             push( @features, $opt );
         }
         elsif ( my ($nofeature) = grep { 'no' . $_ eq $opt } @$features_available ) {
@@ -387,6 +396,19 @@ variety of obvious forms:
 Note that bundles are exactly the same as what's in L<feature>, so for any
 feature not part of a version bundle in L<feature>, you won't pick up that
 feature with a bundle unless you explicitly declare the feature.
+
+=head2 C<class> versus C<cor>
+
+To avoid a conflict between the L<exact::class> extension (see below) and the
+C<class> feature available as of Perl 5.37, the C<class> feature gets handled
+slightly differently from other features. If using Perl 5.37 or newer and
+nothing is specified, the default behavior is to enable the C<class> feature.
+
+To explicitly enable the feature, though, you must use the C<cor> flag.
+
+    use exact -nofeatures, -cor;
+
+To explicitly disable the feature, use the C<nocor> flag.
 
 =head1 EXTENSIONS
 
