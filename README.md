@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.22
+version 1.23
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -168,15 +168,14 @@ It's possible to provide parameters to the `import` method of the extension.
 ## Writing Extensions
 
 An extension may but is not required to have an `import` method. If such a
-method does exist, it will be passed: the package name, the name of the caller
-of [exact](https://metacpan.org/pod/exact), and any parameters passed.
+method does exist, it will be passed the package name and any parameters that
+exist.
 
     package exact::example;
     use exact;
 
-    sub import {
-        my ( $self, $caller, $params ) = @_;
-        exact->monkey_patch( $caller, 'example' => \&example );
+    sub import ( $self, $params, $caller ) {
+        exact->monkey_patch( $caller // caller(), 'example' => \&example );
     }
 
     sub example {
