@@ -217,8 +217,10 @@ sub _patch_import {
         import => sub {
             my ( $package, @exports ) = @_;
 
-            ( my $b_deparsed_sub = B::Deparse->new->coderef2text($original_import) ) =~ s/;//g;
-            $original_import->(@_) if ($b_deparsed_sub);
+            if ( $original_import and ref $original_import eq 'CODE' ) {
+                ( my $b_deparsed_sub = B::Deparse->new->coderef2text($original_import) ) =~ s/;//g;
+                $original_import->(@_) if ($b_deparsed_sub);
+            }
 
             if ( $type eq 'force' ) {
                 @exports = @names;
