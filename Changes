@@ -1,6 +1,8 @@
 Revision history for exact
 
 {{$NEXT}}
+
+1.24      2023-12-05 16:05:38-08:00 America/Los_Angeles
         - export/exportable supports Perl 5.39 UNIVERSAL::import() method add
 
 1.23      2023-09-12 16:06:03-07:00 America/Los_Angeles
