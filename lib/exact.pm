@@ -5,6 +5,7 @@ use 5.014;
 use strict;
 use warnings;
 use namespace::autoclean;
+use B::Deparse;
 use Import::Into;
 use Sub::Util 'set_subname';
 use Syntax::Keyword::Try;
@@ -216,7 +217,8 @@ sub _patch_import {
         import => sub {
             my ( $package, @exports ) = @_;
 
-            $original_import->(@_) if ($original_import);
+            ( my $b_deparsed_sub = B::Deparse->new->coderef2text($original_import) ) =~ s/;//g;
+            $original_import->(@_) if ($b_deparsed_sub);
 
             if ( $type eq 'force' ) {
                 @exports = @names;
