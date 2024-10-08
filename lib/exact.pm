@@ -93,8 +93,10 @@ sub import {
 
     mro::set_mro( $caller, 'c3' ) unless ( grep { $_ eq 'noc3' } @functions );
 
-    monkey_patch( $self, $caller, ( map { $_ => \&{ 'Carp::' . $_ } } qw( croak carp confess cluck ) ) )
-        unless ( grep { $_ eq 'nocarp' } @functions );
+    monkey_patch( $self, $caller,
+        ( map { $_ => \&{ 'Carp::' . $_ } } qw( croak carp confess cluck ) ),
+        ( map { $_ => \&{$_} } qw( deat deattry ) ),
+    ) unless ( grep { $_ eq 'nocarp' } @functions );
 
     feature->unimport('try') if (
         grep { $_ eq 'try' } @$features_available and
@@ -255,6 +257,22 @@ sub exportable {
     return;
 }
 
+sub deat {
+    return ( @_ == 1 ) ? $_[0] : @_
+        unless ( @_ == 1 and not ref $_[0] and length $_[0] );
+    ( my $e = reverse $_[0] ) =~ s/\n\.\d+\s+enil\s+.*\s+ta\s+//s;
+    return '' . reverse($e) . "\n";
+}
+
+sub deattry (&) {
+    try {
+        return $_[0]->();
+    }
+    catch ($e) {
+        die deat $e;
+    }
+}
+
 1;
 __END__
 =pod
@@ -310,7 +328,7 @@ By default, L<exact> will:
 * use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 * set C3 style of L<mro>
 * enable methods on filehandles
-* import L<Carp>'s 4 methods
+* import L<Carp>'s 4 routines (plus the c<deat> and c<deattry> routines; see below)
 * implement a C<try...catch...finally> block solution based on Perl version
 * import L<PerlX::Maybe>'s 4 methods
 * autoclean the namespace via L<namespace::autoclean>
@@ -349,8 +367,12 @@ This skips setting C3 L<mro>.
 
 =head2 C<nocarp>
 
-This skips importing the 4 L<Carp> methods: C<croak>, C<carp>, C<confess>, and
-C<cluck>.
+This skips importing the 4 L<Carp> routines: C<croak>, C<carp>, C<confess>, and
+C<cluck>. Also skips importing the helper routines C<deat> and C<deattry>.
+These reoutines will still be available via L<exact> itself:
+
+    exact::deat();
+    exact::deattry();
 
 =head2 C<notry>
 
@@ -530,6 +552,21 @@ the means to setup groups of methods a consuming namespace can import.
 In the consuming namespace, you can then write:
 
     use YourPackage ':stuff'; # imports both "method" and "other_method"
+
+=head1 ROUTINES
+
+=head2 C<deat>
+
+Removes the error location from an error string. For example:
+
+    print deat "Error at program.pl line 42.\n"; # prints "Error\n"
+
+=head2 C<deattry>
+
+Will try executing a block and return the results, but if there's a thrown
+exception, it'll C<die> a C<deat>-ed error message.
+
+    my $data = deattry { do_some_work_that_might_throw_an_exception() };
 
 =head1 SEE ALSO
 

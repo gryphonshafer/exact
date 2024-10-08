@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.26
+version 1.27
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -51,7 +51,7 @@ By default, [exact](https://metacpan.org/pod/exact) will:
 - use utf8 in the source code context and set STDIN, STROUT, and STRERR to handle UTF8
 - set C3 style of [mro](https://metacpan.org/pod/mro)
 - enable methods on filehandles
-- import [Carp](https://metacpan.org/pod/Carp)'s 4 methods
+- import [Carp](https://metacpan.org/pod/Carp)'s 4 routines (plus the c&lt;deat> and c&lt;deattry> routines; see below)
 - implement a `try...catch...finally` block solution based on Perl version
 - import [PerlX::Maybe](https://metacpan.org/pod/PerlX%3A%3AMaybe)'s 4 methods
 - autoclean the namespace via [namespace::autoclean](https://metacpan.org/pod/namespace%3A%3Aautoclean)
@@ -90,8 +90,12 @@ This skips setting C3 [mro](https://metacpan.org/pod/mro).
 
 ## `nocarp`
 
-This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) methods: `croak`, `carp`, `confess`, and
-`cluck`.
+This skips importing the 4 [Carp](https://metacpan.org/pod/Carp) routines: `croak`, `carp`, `confess`, and
+`cluck`. Also skips importing the helper routines `deat` and `deattry`.
+These reoutines will still be available via [exact](https://metacpan.org/pod/exact) itself:
+
+    exact::deat();
+    exact::deattry();
 
 ## `notry`
 
@@ -270,6 +274,21 @@ the means to setup groups of methods a consuming namespace can import.
 In the consuming namespace, you can then write:
 
     use YourPackage ':stuff'; # imports both "method" and "other_method"
+
+# ROUTINES
+
+## `deat`
+
+Removes the error location from an error string. For example:
+
+    print deat "Error at program.pl line 42.\n"; # prints "Error\n"
+
+## `deattry`
+
+Will try executing a block and return the results, but if there's a thrown
+exception, it'll `die` a `deat`-ed error message.
+
+    my $data = deattry { do_some_work_that_might_throw_an_exception() };
 
 # SEE ALSO
 
