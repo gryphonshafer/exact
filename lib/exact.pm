@@ -257,11 +257,9 @@ sub exportable {
     return;
 }
 
-sub deat {
-    return ( @_ == 1 ) ? $_[0] : @_
-        unless ( @_ == 1 and not ref $_[0] and length $_[0] );
-    ( my $e = reverse $_[0] ) =~ s/\n\.\d+\s+enil\s+.*\s+ta\s+//s;
-    return '' . reverse($e) . "\n";
+sub deat ($) {
+    ( my $e = reverse $_[0] ) =~ s/^\s*\.\d+\s+enil\s+.*?\s+ta\s+//;
+    return '' . reverse $e;
 }
 
 sub deattry (&) {
@@ -269,7 +267,7 @@ sub deattry (&) {
         return $_[0]->();
     }
     catch ($e) {
-        die deat $e;
+        die deat $e, "\n";
     }
 }
 
@@ -559,7 +557,7 @@ In the consuming namespace, you can then write:
 
 Removes the error location from an error string. For example:
 
-    print deat "Error at program.pl line 42.\n"; # prints "Error\n"
+    print deat 'Error at program.pl line 42.', "\n"; # prints "Error\n"
 
 =head2 C<deattry>
 

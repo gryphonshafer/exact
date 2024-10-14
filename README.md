@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.27
+version 1.28
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -281,7 +281,7 @@ In the consuming namespace, you can then write:
 
 Removes the error location from an error string. For example:
 
-    print deat "Error at program.pl line 42.\n"; # prints "Error\n"
+    print deat 'Error at program.pl line 42.', "\n"; # prints "Error\n"
 
 ## `deattry`
 
