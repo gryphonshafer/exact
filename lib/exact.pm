@@ -9,6 +9,7 @@ use B::Deparse;
 use Import::Into;
 use Sub::Util 'set_subname';
 use Syntax::Keyword::Try;
+use Syntax::Keyword::Defer;
 
 # VERSION
 
@@ -31,6 +32,7 @@ my $functions_available = [ qw(
     nostrict nowarnings
     nofeatures nobundle noskipexperimentalwarnings
     noutf8 noc3 nocarp notry trytiny nomaybe noautoclean
+    nodefer
 ) ];
 
 my $functions_deprecated = ['noexperiments'];
@@ -111,6 +113,11 @@ sub import {
         not grep { $_ eq 'trytiny' } @functions
     );
     Try::Tiny->import::into($caller) if ( grep { $_ eq 'trytiny' } @functions );
+
+    Syntax::Keyword::Defer->import_into($caller) if (
+        $perl_version < 36 and
+	not grep { $_ eq 'nodefer' } @functions
+    );
 
     monkey_patch( $self, $caller, ( map { $_ => \&{ 'PerlX::Maybe::' . $_ } } qw(
         maybe provided provided_deref provided_deref_with_maybe
