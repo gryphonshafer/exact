@@ -8,6 +8,7 @@ use namespace::autoclean;
 use B::Deparse;
 use Import::Into;
 use Sub::Util 'set_subname';
+use Syntax::Keyword::Defer;
 use Syntax::Keyword::Try;
 
 # VERSION
@@ -30,7 +31,7 @@ my $features_available = ( %feature::feature_bundle and $feature::feature_bundle
 my $functions_available = [ qw(
     nostrict nowarnings
     nofeatures nobundle noskipexperimentalwarnings
-    noutf8 noc3 nocarp notry trytiny nomaybe noautoclean
+    noutf8 noc3 nocarp notry trytiny nodefer nomaybe noautoclean
 ) ];
 
 my $functions_deprecated = ['noexperiments'];
@@ -111,6 +112,11 @@ sub import {
         not grep { $_ eq 'trytiny' } @functions
     );
     Try::Tiny->import::into($caller) if ( grep { $_ eq 'trytiny' } @functions );
+
+    Syntax::Keyword::Defer->import_into($caller) if (
+        $perl_version < 36 and
+    	not grep { $_ eq 'nodefer' } @functions
+    );
 
     monkey_patch( $self, $caller, ( map { $_ => \&{ 'PerlX::Maybe::' . $_ } } qw(
         maybe provided provided_deref provided_deref_with_maybe
@@ -382,6 +388,10 @@ functionality of L<Syntax::Keyword::Try> otherwise.
 
 If you want to use L<Try::Tiny> instead of either native Perl's C<try> feature
 or L<Syntax::Keyword::Try>, this is how.
+
+=head2 C<nodefer>
+
+Skips setup of C<defer> block support.
 
 =head2 C<nomaybe>
 
