@@ -115,7 +115,7 @@ sub import {
 
     Syntax::Keyword::Defer->import_into($caller) if (
         $perl_version < 36 and
-    	not grep { $_ eq 'nodefer' } @functions
+        not grep { $_ eq 'nodefer' } @functions
     );
 
     monkey_patch( $self, $caller, ( map { $_ => \&{ 'PerlX::Maybe::' . $_ } } qw(
