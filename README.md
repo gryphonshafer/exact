@@ -305,6 +305,12 @@ You can look for additional information at:
 - [CPANTS](http://cpants.cpanauthors.org/dist/exact)
 - [CPAN Testers](http://www.cpantesters.org/distro/T/exact.html)
 
+# GRATITUDE
+
+Special thanks to the following for contributing:
+
+- Alexander Ponomarev (shootnix)
+
 # AUTHOR
 
 Gryphon Shafer <gryphon@cpan.org>

@@ -1,6 +1,7 @@
 Revision history for exact
 
 {{$NEXT}}
+        - Add support for "defer" prior to Perl 5.36; thank you: Alexander Ponomarev (shootnix)
 
 1.29      2025-06-13 10:28:34-07:00 America/Los_Angeles
         - Add security policy as per CPANSec recommendation

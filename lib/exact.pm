@@ -589,3 +589,12 @@ You can look for additional information at:
 * L<CPAN Testers|http://www.cpantesters.org/distro/T/exact.html>
 
 =cut
+
+=head1 GRATITUDE
+
+Special thanks to the following for contributing:
+
+=for :list
+* Alexander Ponomarev (shootnix)
+
+=cut
