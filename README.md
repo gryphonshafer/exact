@@ -4,7 +4,7 @@ exact - Perl pseudo pragma to enable strict, warnings, features, mro, filehandle
 
 # VERSION
 
-version 1.29
+version 1.30
 
 [![test](https://github.com/gryphonshafer/exact/workflows/test/badge.svg)](https://github.com/gryphonshafer/exact/actions?query=workflow%3Atest)
 [![codecov](https://codecov.io/gh/gryphonshafer/exact/graph/badge.svg)](https://codecov.io/gh/gryphonshafer/exact)
@@ -107,6 +107,10 @@ functionality of [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKey
 
 If you want to use [Try::Tiny](https://metacpan.org/pod/Try%3A%3ATiny) instead of either native Perl's `try` feature
 or [Syntax::Keyword::Try](https://metacpan.org/pod/Syntax%3A%3AKeyword%3A%3ATry), this is how.
+
+## `nodefer`
+
+Skips setup of `defer` block support.
 
 ## `nomaybe`
 
